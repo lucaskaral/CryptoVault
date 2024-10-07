@@ -1,12 +1,14 @@
 ﻿using Flunt.Notifications;
 using CryptoVault.Domain.Users;
 using Microsoft.EntityFrameworkCore;
+using CryptoVault.Domain.Companies;
 
 namespace CryptoVault.Infra.Data
 {
     public class ApplicationDbContext : DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Company> Companies { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

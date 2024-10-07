@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoVault.EndPoints.Companies
 {
-    public class UserPut
+    public class CompanyGetById
     {
         public static string Template => "/companies/{id:guid}";
-        public static string[] Methods => new string[] { HttpMethod.Put.ToString() };
+        public static string[] Methods => new string[] { HttpMethod.Get.ToString() };
         public static Delegate Handle => Action;
 
-        public static IResult Action([FromRoute] Guid id, CompanyRequest userRequest, ApplicationDbContext context)
+        public static IResult Action([FromRoute] Guid id, ApplicationDbContext context)
         {
             var company = context.Companies
                 .Where(c => c.Id == id)
@@ -18,23 +18,21 @@ namespace CryptoVault.EndPoints.Companies
             if (company == null)
             {
                 Dictionary<string, string[]> errors = new Dictionary<string, string[]>();
-                string[] messages = new string[] { $"Companhia inválida." };
+                string[] messages = new string[] { $"Company not found." };
                 errors.Add("errors", messages);
                 return Results.ValidationProblem(errors);
             }
-            company.Name = userRequest.Name;
-            company.cnpj = userRequest.cnpj;
 
-            if (!company.IsValid)
+            var companyResponse = new CompanyResponse
             {
-                return Results.ValidationProblem(company.Notifications.ConvertToProblemDetails());
-            }
+                Id = company.Id,
+                cnpj = company.cnpj,
+                Name = company.Name,
+                Certificates = company.Certificates,
+                KeyPairs = company.KeyPairs
+            };
 
-            
-            context.SaveChanges();
-
-            return Results.Ok();
+            return Results.Ok(companyResponse);
         }
     }
 }
-

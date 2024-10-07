@@ -1,26 +1,26 @@
 ﻿using CryptoVault.Infra.Data;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CryptoVault.EndPoints.Users
+namespace CryptoVault.EndPoints.Companies
 {
-    public class UserDelete
+    public class CompanyDelete
     {
-        public static string Template => "/users/{id:guid}";
+        public static string Template => "/companies/{id:guid}";
         public static string[] Methods => new string[] { HttpMethod.Delete.ToString() };
         public static Delegate Handle => Action;
 
         public static IResult Action([FromRoute] Guid id, ApplicationDbContext context)
         {
-            var user = context.Users
+            var company = context.Companies
                 .Where(p => p.Id == id)
                 .FirstOrDefault();
 
-            if (user == null)
+            if (company == null)
             {
                 return Results.Ok();
             }
 
-            context.Remove(user);
+            context.Remove(company);
             context.SaveChanges();
 
             return Results.Ok();
